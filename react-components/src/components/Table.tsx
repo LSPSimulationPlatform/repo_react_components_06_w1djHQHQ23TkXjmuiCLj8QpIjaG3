@@ -110,4 +110,4 @@ function Table<T extends object = any>({
 }
 
 // Export the Table component as default
-export default Table;
+export default Table; 
