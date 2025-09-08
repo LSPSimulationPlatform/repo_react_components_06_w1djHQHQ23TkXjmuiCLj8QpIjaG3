@@ -1,35 +1,8 @@
-// Import React for building UI components
-import React from 'react';
-// Import Ant Design's Table, Button, and Space components
-import { Table as AntTable, Button, Space } from 'antd';
-// Import type for table columns from Ant Design
-import type{ ColumnsType } from 'antd/es/table';
-// Import type for table props from Ant Design
-import  type { TableProps as AntTableProps } from 'antd';
+import React from 'react'; // - React core library for component creation
+import { Table as AntTable, Button as AntButton, Space } from 'antd'; // - Ant Design components: Table for data display, Button for actions, Space for layout
+import type { ColumnsType } from 'antd/es/table'; // - TypeScript type definition for table column configuration
 
-// Define types for custom actions that can be rendered in the Actions column
-interface TableAction<T> {
-  key: string; // Unique key for the action
-  label: string; // Button label
-  type?: 'primary' | 'default' | 'dashed' | 'link' | 'text'; // Button style type
-  danger?: boolean; // If true, button is styled as dangerous
-  onClick: (record: T) => void; // Handler for button click, receives row record
-}
-
-// Define the props interface for the Table component, using generics for flexibility
-interface TableProps<T> {
-  columns: ColumnsType<T>; // Table column definitions
-  data: T[]; // Array of data objects to display
-  loading?: boolean; // Show loading spinner if true
-  pagination?: boolean | AntTableProps<T>['pagination']; // Pagination config or toggle
-  size?: 'small' | 'middle' | 'large'; // Table size variant
-  actions?: TableAction<T>[]; // Custom action buttons for each row
-  onEdit?: (record: T) => void; // Handler for edit action
-  onDelete?: (record: T) => void; // Handler for delete action
-  className?: string; // Optional CSS class for the table
-  style?: React.CSSProperties; // Optional inline styles
-  rowKey?: keyof T | ((record: T) => React.Key); // Unique row key or function to generate it
-}
+ 
 
 /**
  * Reusable Table component built on top of Ant Design
@@ -44,70 +17,74 @@ interface TableProps<T> {
  * @param onEdit - Edit handler function
  * @param onDelete - Delete handler function
  */
-function Table<T extends object = any>({
-  columns,        // Table columns
-  data,           // Table data
-  loading = false,// Loading state (default: false)
-  pagination = true, // Pagination enabled (default: true)
-  size = 'middle',// Table size (default: 'middle')
-  actions,        // Custom row actions
-  onEdit,         // Edit handler
-  onDelete,       // Delete handler
-  className,      // Optional CSS class
-  style,          // Optional inline styles
-  rowKey,         // Row key or generator function
-}: TableProps<T>) {
-  
+function Table<T extends Record<string, any>>({
+  columns, // - Array of column definitions with sorting, filtering, and display configurations
+  data, // - Array of data objects to populate table rows
+  loading = false, // - Boolean to show loading spinner overlay on table
+  pagination = true, // - Enable/disable pagination controls (default enabled)
+  size = 'middle', // - Table size variant: 'small', 'middle', or 'large' for spacing
+  actions, // - Array of custom action objects for additional row buttons
+  handleEdit, // - Function called when Edit button is clicked, receives record as parameter
+  handleDelete, // - Function called when Delete button is clicked, receives record as parameter
+  className, // - Optional CSS class for table container styling
+  style, // - Optional inline styles for table container
+}: any) { // - Generic function component that accepts any data type extending Record<string, any>
   // Create action column if edit/delete handlers or custom actions are provided
-  const actionColumn: ColumnsType<T>[number] | null = 
-    (onEdit || onDelete || actions) ? {
-      title: 'Actions', // Column header
-      key: 'actions',   // Unique key for column
-      width: 150,       // Fixed width for actions column
-      fixed: 'right' as const, // Fix column to the right
-      render: (_, record: T) => (
-        // Render a horizontal space for action buttons
-        <Space size="small">
-        </Space>
-      ),
-    } : null;
+  const actionColumn: ColumnsType<T>[0] | null = (handleEdit || handleDelete || actions) ? {
+    title: 'Actions', // - Column header text for action buttons column
+    key: 'actions', // - Unique identifier for the actions column
+    width: 150, // - Fixed width in pixels to prevent layout shifts
+    render: (_, record) => ( // - Custom render function for action buttons, receives full record data
+      <Space size="small">  
+        {handleEdit && (
+          <AntButton 
+            type="primary" // - Primary button styling for Edit action
+            size="small" // - Small button size to fit in table rows
+            onClick={() => handleEdit(record)} // - Call edit handler with current record data
+          >
+            Edit
+          </AntButton>
+        )}  
+        {handleDelete && (
+          <AntButton 
+            type="primary" // - Primary button styling for consistency
+            danger // - Red danger styling to indicate destructive action
+            size="small" // - Small button size to fit in table rows
+            onClick={() => handleDelete(record)} // - Call delete handler with current record data
+          >
+            Delete
+          </AntButton>
+        )} {/* Conditionally render Delete button only if handler is provided */}
+        {actions && actions.map((action) => (
+          <AntButton
+            key={action.key} // - Unique key for React list rendering
+            type={action.type || 'default'} // - Button type from action config, fallback to default
+            danger={action.danger} // - Optional danger styling for destructive custom actions
+            size="small" // - Consistent small size for all action buttons
+            onClick={() => action.onClick(record)} // - Call custom action handler with record data
+          >
+            {action.label} {/* - Display text from action configuration */}
+          </AntButton>
+        ))} {/* - Render any additional custom action buttons from actions array */}
+      </Space>
+    ),
+  } : null; // - Return null if no action handlers provided, prevents empty column
 
-  // Combine columns with action column if present
-  const finalColumns = actionColumn ? [...columns, actionColumn] : columns;
-
-  // Handle rowKey generation for each row
-  const getRowKey = (record: T): React.Key => {
-    if (rowKey) {
-      if (typeof rowKey === 'function') {
-        // If rowKey is a function, call it with the record
-        return rowKey(record);
-      }
-      // If rowKey is a property name, use it from the record
-      return record[rowKey] as React.Key;
-    }
-    // Fallback: generate a random key (not recommended for production)
-    return Math.random().toString();
-  };
+  // Combine columns with action column
+  const finalColumns = actionColumn ? [...columns, actionColumn] : columns; // - Append actions column to existing columns or use original columns if no actions
 
   return (
     <AntTable
-      columns={finalColumns} // Table columns (with actions if present)
-      dataSource={data}      // Table data
-      loading={loading}      // Loading spinner
-      pagination={pagination === true ? { 
-        pageSize: 10, 
-        showSizeChanger: true,
-        showQuickJumper: true,
-        showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`
-      } : pagination}        // Pagination config
-      size={size}            // Table size
-      className={className}  // Optional CSS class
-      style={style}          // Optional inline styles
-      rowKey={getRowKey}     // Unique row key
-      scroll={{ x: true }}   // Enable horizontal scroll for wide tables
+      columns={finalColumns} // - Pass combined column configuration to Ant Design Table
+      dataSource={data} // - Array of data objects to populate table rows
+      loading={loading} // - Show loading spinner overlay when true
+      pagination={pagination ? { pageSize: 10, showSizeChanger: true } : false} // - Configure pagination with 10 rows per page and size options, or disable completely
+      size={size} // - Control table spacing and row height (small/middle/large)
+      className={className} // - Apply custom CSS classes for additional styling
+      style={style} // - Apply inline styles for layout customization
+      rowKey={(record) => record.id || Math.random().toString()} // - Generate unique key for each row, prefer record.id or fallback to random string
     />
   );
 }
 
-// Export the Table component as default
-export default Table; 
+export default Table; // - Export component as default for use in other components
