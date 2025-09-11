@@ -35,13 +35,13 @@ const App: React.FC = () => {
       }}
     >
       {/* Main container with minimum height and background color */}
-      <div style={{ minHeight: '100vh', backgroundColor: '#f5f5f5' }}>
+      <div style={{ minHeight: '100vh', backgroundColor: '#f5f5f5', paddingTop: '90px' }}>
         {/* Header section with background, padding, shadow, and margin */}
         <header style={{
-          background: '#fff',
-          padding: '16px 24px',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-          position: 'relative',
+         background: '#fff', 
+  padding: '16px 24px', 
+  boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+  margin: '24px auto 24px auto'
         }}>
           {/* Main title with custom color and no margin */}
           <h1 style={{ margin: 0, color: '#1890ff' }}>

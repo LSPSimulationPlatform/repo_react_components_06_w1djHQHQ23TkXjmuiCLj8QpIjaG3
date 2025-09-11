@@ -39,7 +39,7 @@ const {
 }=useCrudExample() // - Extract all CRUD functionality from custom hook
 
   return (
-    <div style={{ padding: '24px', maxWidth: '1200px', margin: '0 auto' }}> {/* - Main container with centered layout and responsive padding */}
+    <div style={{ padding: '24px', maxWidth: '2000px', margin: '0 auto' }}> {/* - Main container with centered layout and responsive padding */}
       {/* Responsive layout using Ant Design Grid */}
       <Row gutter={[24, 24]}> {/* - Grid row with 24px horizontal and vertical spacing between columns */}
         {/* Form Section (left column on desktop) */}
