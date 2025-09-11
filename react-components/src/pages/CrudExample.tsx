@@ -2,7 +2,7 @@ import React, { useState } from 'react'; // - React core library for component c
 import { Row, Col, message } from 'antd'; // - Ant Design grid components for responsive layout
 import useCrudExample from '../hooks/useCrudExample.tsx'; // - Custom hook containing all CRUD logic and state management
 import CreateUpdateCrudExample from '../components/CreateUpdateCrudExample.tsx'; // - Form component for creating/editing records
-import TabelCrudExample from '../components/TableCrudExample.tsx'; // - Table component for displaying records with actions
+import TableCrudExample from '../components/TableCrudExample.tsx'; // - Table component for displaying records with actions
 
 /**
  * CRUD Example Component
@@ -23,9 +23,11 @@ const CrudExample: React.FC = () => {
   // Form state management
 const {
   formData, // - Current form values (name, category, description)
-  categoryOptions, // - Static array of dropdown options for category field
+  categoryOptions,
+  categoryOptionsTwo, // - Static array of dropdown options for category field
   handleInputChange, // - Function for handling text input and textarea changes
-  handleSelectChange, // - Function for handling dropdown selection changes
+  handleSelectChange,
+  handleSelectChangeTwo, // - Function for handling dropdown selection changes
   handleSubmit, // - Async function for create/update operations with validation
   handleEdit, // - Function to populate form with existing record for editing
   handleDelete, // - Function to remove record from data array
@@ -44,9 +46,11 @@ const {
         <Col xs={24} lg={8}> {/* - Full width on mobile (xs=24), 1/3 width on large screens (lg=8) */}
           <CreateUpdateCrudExample
            formData={formData} // - Pass current form values to populate input fields
-           categoryOptions={categoryOptions} // - Pass dropdown options for category selection
+           categoryOptions={categoryOptions} 
+           categoryOptionsTwo={categoryOptionsTwo}// - Pass dropdown options for category selection
            handleInputChange={handleInputChange} // - Pass input change handler for text fields
-           handleSelectChange={handleSelectChange} // - Pass selection handler for dropdown
+           handleSelectChange={handleSelectChange}
+           handleSelectChangeTwo={handleSelectChangeTwo} // - Pass selection handler for dropdown
            handleSubmit={handleSubmit} // - Pass submit handler for form processing
            handleCancelEdit={handleCancelEdit} // - Pass cancel handler to exit edit mode
            isSubmitting={isSubmitting} // - Pass loading state for button and form disabling
@@ -56,7 +60,7 @@ const {
 
         {/* Table Section (right column on desktop) */}
         <Col xs={24} lg={16}> {/* - Full width on mobile (xs=24), 2/3 width on large screens (lg=16) */}
-          <TabelCrudExample 
+          <TableCrudExample 
               columns={columns} // - Pass table column configuration with sorting and filtering
               records={records} // - Pass data array for table rows
               handleEdit={handleEdit} // - Pass edit handler for Edit button clicks

@@ -37,11 +37,11 @@ const App: React.FC = () => {
       {/* Main container with minimum height and background color */}
       <div style={{ minHeight: '100vh', backgroundColor: '#f5f5f5' }}>
         {/* Header section with background, padding, shadow, and margin */}
-        <header style={{ 
-          background: '#fff', 
-          padding: '16px 24px', 
+        <header style={{
+          background: '#fff',
+          padding: '16px 24px',
           boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-          marginBottom: '24px'
+          position: 'relative',
         }}>
           {/* Main title with custom color and no margin */}
           <h1 style={{ margin: 0, color: '#1890ff' }}>
@@ -52,7 +52,7 @@ const App: React.FC = () => {
             Demonstrating reusable components, proper TypeScript usage, and CRUD operations
           </p>
         </header>
-        
+
         {/* Main content area where the CRUD example is rendered */}
         <main>
           <CrudExample />
